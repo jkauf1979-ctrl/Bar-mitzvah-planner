@@ -232,22 +232,19 @@ function SetupScreen({ onConnect }) {
   const [progress, setProgress] = useState("");
   const [error, setError] = useState("");
 
+  const BASE_ID = "appwKdOAuyH3bpsXN";
+
   const connect = async () => {
     if (!token.trim()) return;
-    setError(""); setStep("loading"); setProgress("Validating token…");
+    setError(""); setStep("loading"); setProgress("Connecting to Airtable…");
     try {
-      const tempApi = new AT(token.trim(), null);
-      const { bases, workspaces } = await tempApi.listBases();
-      const wsId = workspaces?.[0]?.id;
-      if (!wsId) throw new Error("No workspace found on this account");
-      setProgress("Creating Bar Mitzvah base…");
-      const base = await tempApi.createBase("Bar Mitzvah 2027", wsId);
-      const api = new AT(token.trim(), base.id);
+      const api = new AT(token.trim(), BASE_ID);
+      setProgress("Setting up tables…");
       await setupSchema(api, setProgress);
       localStorage.setItem("bm_token", token.trim());
-      localStorage.setItem("bm_baseId", base.id);
+      localStorage.setItem("bm_baseId", BASE_ID);
       setProgress("All done! Loading your planner…");
-      setTimeout(()=>onConnect(token.trim(), base.id), 800);
+      setTimeout(()=>onConnect(token.trim(), BASE_ID), 800);
     } catch(e) {
       setError(e.message); setStep("form");
     }
@@ -265,6 +262,7 @@ function SetupScreen({ onConnect }) {
         {step==="form" && <>
           <div style={{ background:"#f0f4ff", border:"1px solid #c7d7fd", borderRadius:12, padding:"14px 16px", marginBottom:24, fontSize:13, color:"#374151", lineHeight:1.7, fontFamily:FB }}>
             Go to <a href="https://airtable.com/create/tokens" target="_blank" rel="noreferrer" style={{ color:NAVY, fontWeight:600 }}>airtable.com/create/tokens</a> and create a token with scopes: <code style={{ background:"#e8edf5", padding:"1px 5px", borderRadius:4, fontSize:12 }}>data.records:read</code> <code style={{ background:"#e8edf5", padding:"1px 5px", borderRadius:4, fontSize:12 }}>data.records:write</code> <code style={{ background:"#e8edf5", padding:"1px 5px", borderRadius:4, fontSize:12 }}>schema.bases:read</code> <code style={{ background:"#e8edf5", padding:"1px 5px", borderRadius:4, fontSize:12 }}>schema.bases:write</code>
+            <br /><br />Under <strong>Access</strong>, click <strong>Add a base</strong> and select <strong>Bar Mitzvah 2027</strong>.
           </div>
           <div style={lS}>Airtable API Token</div>
           <input type="password" placeholder="pat_xxxxxxxxxxxxxxxxxx" value={token} onChange={e=>setToken(e.target.value)} onKeyDown={e=>e.key==="Enter"&&connect()} style={{ ...iS(), marginBottom:16, fontSize:14 }} />
