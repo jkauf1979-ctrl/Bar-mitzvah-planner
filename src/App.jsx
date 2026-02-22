@@ -1504,11 +1504,11 @@ export default function App() {
   const [hotels, setHotels] = useState([]);
   const [torah, setTorah] = useState({});
 
-  useEffect(() => {
-    const token = localStorage.getItem("bm_token");
-    const baseId = localStorage.getItem("bm_baseId");
-    if (token && baseId) handleConnect(token, baseId);
-  }, []);
+
+  const TOKEN = "patskN9mAKjHL6s7w.c069df3bf92bfb0cb196c0e4a997c4ad41c53becda0f821cb67b693fc3f2ce2c";
+  const BASE_ID = "appwKdOAuyH3bpsXN";
+
+  useEffect(() => { handleConnect(TOKEN, BASE_ID); }, []);
 
   const handleConnect = async (token, baseId) => {
     const a = new AT(token, baseId);
@@ -1529,13 +1529,7 @@ export default function App() {
     setLoading(false);
   };
 
-  if (!connected) return <SetupScreen onConnect={handleConnect} />;
-  if (loading) return (
-    <div style={{ minHeight:"100vh", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:F, color:NAVY, fontSize:24 }}>
-      <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
-      Loading your planner…
-    </div>
-  );
+  if (!connected || loading) return (<div style={{ minHeight:"100vh", display:"flex", alignItems:"center", justifyContent:"center", background:"#f7f5f0", fontFamily:"serif", color:"#1a2744", fontSize:22, flexDirection:"column", gap:16 }}><div style={{fontSize:48}}>✡️</div><div>Loading your planner2026</div></div>);
 
   const pages = [
     <Dashboard families={families} expenses={expenses} cateringPrices={cateringPrices} tasks={tasks} gifts={gifts} />,
@@ -1563,10 +1557,6 @@ export default function App() {
               <div style={{ fontSize:11, color:"rgba(255,255,255,.55)", marginTop:2, letterSpacing:1, textTransform:"uppercase", fontFamily:FB }}>November 6, 2027</div>
             </div>
           </div>
-          <button onClick={()=>{localStorage.removeItem("bm_token");localStorage.removeItem("bm_baseId");setConnected(false);}}
-            style={{ ...btn("ghost",{fontSize:12,padding:"6px 14px"}), color:"rgba(255,255,255,.6)", border:"1px solid rgba(255,255,255,.2)", background:"transparent" }}>
-            Disconnect
-          </button>
         </div>
       </div>
 
